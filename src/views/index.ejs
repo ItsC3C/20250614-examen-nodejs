@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Takenlijst</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <h1>Takenlijst</h1>
+    <form method="get" action="/">
+        <label for="category">Categorie:</label>
+        <select name="category" id="category">
+            <option value="">Alle</option>
+            <% categories.forEach(function(cat) { %>
+                <option value="<%= cat %>" <%= selectedCategory === cat ? 'selected' : '' %>><%= cat %></option>
+            <% }) %>
+        </select>
+        <label for="priority">Prioriteit:</label>
+        <select name="priority" id="priority">
+            <option value="">Alle</option>
+            <% priorities.forEach(function(prio) { %>
+                <option value="<%= prio %>" <%= selectedPriority === prio ? 'selected' : '' %>><%= prio %></option>
+            <% }) %>
+        </select>
+        <button type="submit">Filter</button>
+    </form>
+    <table>
+        <thead>
+            <tr>
+                <th>Titel</th>
+                <th>Beschrijving</th>
+                <th>Categorie</th>
+                <th>Prioriteit</th>
+                <th>Deadline</th>
+            </tr>
+        </thead>
+        <tbody id="task-table-body">
+            <% tasks.forEach(function(task) { %>
+                <tr>
+                    <td><%= task.title %></td>
+                    <td><%= task.description %></td>
+                    <td><%= task.category %></td>
+                    <td><%= task.priority %></td>
+                    <td><%= task.dueDate ? task.dueDate.toISOString().substring(0, 10) : '' %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+    <script src="/js/main.js"></script>
+  </body>
+</html>

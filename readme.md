@@ -1,71 +1,60 @@
-# Node, Express and TypeScript Project Template
+# Task API
 
-Welcome to the **Node, Express and TypeScript Project Template**! This repository serves as a starter template for building Node.js applications with TypeScript. It comes pre-configured with models, controllers, routes, and bundling, so you can focus on building your application.
+Deze API is gebouwd met Node.js, Express en MongoDB. Ze laat je toe om taken te beheren via een RESTful interface.
 
-## Features
+## Endpoints
 
-- **TypeScript**: Strongly typed language for writing robust and maintainable code.
-- **Project Structure**: Organized folder structure with models, controllers, and routes.
-- **Bundling pkgroll**: Pre-configured with a bundler for efficient builds.
-- **TSX**: For automatic server restarts an running typescript during development.
-- **Dependency Management**: Configured with npm.
+### GET `/api/tasks`
 
-## Project Structure
+Haalt alle taken op.
 
-```
-├── src
-│   ├── controllers
-│   │   └── exampleController.ts
-│   ├── middleware
-│   │   └── exampleMiddleware.ts
-│   ├── models
-│   │   └── exampleModel.ts
-│   ├── routes
-│   │   └── exampleRoutes.ts
-│   └── server.ts    // Main entry point of the application
-├── dist             // Compiled output (auto-generated)
-├── package.json     // Project dependencies and scripts
-├──.gitignore        // Ignore files to github
-├── tsconfig.json    // TypeScript configuration
-└── README.md        // Project documentation
+### GET `/api/tasks/:id`
+
+Haalt één taak op via het ID.
+
+### POST `/api/tasks`
+
+Voegt een nieuwe taak toe.  
+**Body:**  
+```json
+{
+  "title": "Afwassen en stofzuigen",
+  "description": "In de voormiddag moet het huis proper zijn!",
+  "category": "huishouden",
+  "priority": "hoog",
+  "dueDate": "2025-06-30T12:00:00Z"
+}
 ```
 
-## Getting Started
+### PUT `/api/tasks/:id`
 
-### 1. Start Development Server
+Wijzigt een bestaande taak.  
+**Body:**
 
-Run the development server with hot-reloading:
-
-```bash
-npm run dev
+```json
+{
+  "title": "string",
+  "description": "string"
+}
 ```
 
-### 2. Build the Project
+### DELETE `/api/tasks/:id`
 
-Compile TypeScript files to JavaScript:
+Verwijdert een taak.
 
-```bash
-npm run build
-```
+## Authenticatie
 
-### 3. Start the Production Server
+Momenteel is er geen authenticatie vereist.
 
-After building the project, start the server:
+## Opstarten
 
-```bash
-npm start
-```
+1. Installeer dependencies:  
+   `npm install`
+2. Zet een `.env` bestand met je MongoDB connectiestring.
+3. Start de server:  
+   `npm run dev` of `npm start`
 
-## Scripts
+## Extra
 
-- `dev`: Starts the development server with hot-reloading.
-- `build`: Compiles the TypeScript source code to JavaScript.
-- `start`: Starts the production server.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
----
-
-Happy coding! 🎉
+- Gemaakt met Express en Mongoose.
+- Responses zijn in JSON-formaat.

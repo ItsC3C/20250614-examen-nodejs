@@ -40,10 +40,13 @@ export const getAllTasks = async (req: Request, res: Response) => {
 
 export const getTaskById = async (req: Request, res: Response) => {
   try {
-    const tasks = await Task.find({
-      userId: req.params.userId,
-    }).populate("productId");
-    res.json(tasks);
+    const task = await Task.findById(req.params.id);
+    if (!task) return res.status(404).json({ message: "Taak niet gevonden" });
+    const now = new Date();
+    if (task.dueDate && new Date(task.dueDate) < now) {
+      return res.status(400).json({ message: "Taak is verlopen" });
+    }
+    res.json(task);
   } catch {
     res.status(500).json({ message: "Interne serverfout" });
   }

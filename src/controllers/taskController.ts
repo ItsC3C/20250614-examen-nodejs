@@ -1,59 +1,68 @@
 import { Request, Response } from "express";
 import { Task } from "../models/taskModel";
 
-export const getTasks = async (req: Request, res: Response) => {
+export const getAllTasks = async (req: Request, res: Response) => {
   try {
-    const {
-      category,
-      priority,
-      page,
-      limit,
-      sort = "dueDate",
-      order = "asc",
-    } = req.query;
+    const { category, priority, page, limit, sort, order } = req.query;
 
     const filter: any = {
       ...(category && {
-        category: { $regex: new RegExp(category as string, "i") },
+        category: { $regex: new RegExp(String(category), "i") },
       }),
       ...(priority && {
-        priority: { $regex: new RegExp(priority as string, "i") },
+        priority: { $regex: new RegExp(String(priority), "i") },
       }),
     };
 
-    const query = Task.find(filter).sort({
-      [sort as string]: order === "desc" ? -1 : 1,
-    });
+    let query = Task.find(filter);
+
+    if (sort && order) {
+      query = query.sort({ [String(sort)]: order === "asc" ? 1 : -1 });
+    }
 
     if (page && limit) {
-      const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
-      query.skip(skip).limit(parseInt(limit as string));
-
-      const [tasks, total] = await Promise.all([
-        query,
-        Task.countDocuments(filter),
-      ]);
-
-      return res.status(200).json();
+      const skip = (Number(page) - 1) * Number(limit);
+      query = query.skip(skip).limit(Number(limit));
     }
 
     const tasks = await query;
-    res.status(200).json(tasks);
-  } catch (err) {
-    res.status(500).json({ message: "Interne serverfout", error: err });
+    const now = new Date();
+
+    const upcomingTasks = tasks.filter(
+      (task) => task.dueDate && new Date(task.dueDate) >= now
+    );
+
+    res.status(200).json(upcomingTasks);
+  } catch (error) {
+    res.status(500).json({ message: "Interne serverfout", error });
+  }
+};
+
+export const getTaskById = async (req: Request, res: Response) => {
+  try {
+    const tasks = await Task.find({
+      userId: req.params.userId,
+    }).populate("productId");
+    res.json(tasks);
+  } catch {
+    res.status(500).json({ message: "Interne serverfout" });
   }
 };
 
 export const addTask = async (req: Request, res: Response) => {
   const { title, description, category, priority, dueDate } = req.body;
-  const task = await Task.create({
-    title,
-    description,
-    category,
-    priority,
-    dueDate,
-  });
-  res.status(201).json(task);
+  try {
+    const task = await Task.create({
+      title,
+      description,
+      category,
+      priority,
+      dueDate,
+    });
+    res.status(201).json(task);
+  } catch (err) {
+    res.status(500).json({ message: "Interne serverfout", error: err });
+  }
 };
 
 // export const updateTask = async (req: Request, res: Response) => {

@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 // Routes
-app.get("/tasks", taskRoutes);
+app.use("/tasks", taskRoutes);
 app.all("*splat", notFound);
 
 // Error handling (must be the last)

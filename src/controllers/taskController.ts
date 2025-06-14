@@ -41,14 +41,18 @@ export const getAllTasks = async (req: Request, res: Response) => {
 export const getTaskById = async (req: Request, res: Response) => {
   try {
     const task = await Task.findById(req.params.id);
-    if (!task) return res.status(404).json({ message: "Taak niet gevonden" });
+    if (!task) {
+      res.status(404).json({ message: "Taak niet gevonden" });
+      return;
+    }
     const now = new Date();
     if (task.dueDate && new Date(task.dueDate) < now) {
-      return res.status(400).json({ message: "Taak is verlopen" });
+      res.status(400).json({ message: "Taak is verlopen" });
+      return;
     }
-    res.json(task);
-  } catch {
-    res.status(500).json({ message: "Interne serverfout" });
+    res.status(200).json(task);
+  } catch (error) {
+    res.status(500).json({ message: "Interne serverfout", error });
   }
 };
 

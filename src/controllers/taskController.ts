@@ -82,3 +82,17 @@ export const updateTask = async (req: Request, res: Response) => {
   );
   res.status(200).json(task);
 };
+
+export const deleteTask = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const task = await Task.findByIdAndDelete(id);
+    if (!task) {
+      res.status(404).json({ message: "Taak niet gevonden" });
+      return;
+    }
+    res.status(200).json({ message: "Taak succesvol verwijderd" });
+  } catch (error) {
+    res.status(500).json({ message: "Interne serverfout", error });
+  }
+};
